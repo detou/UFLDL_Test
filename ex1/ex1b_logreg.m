@@ -33,6 +33,9 @@ tic;
 theta=minFunc(@logistic_regression, theta, options, train.X, train.y);
 fprintf('Optimization took %f seconds.\n', toc);
 
+% error = grad_check(@logistic_regression, theta, 100, train.X, train.y);
+% fprintf('Average gradient error is %10f\n', error);
+
 % Now, call minFunc again with logistic_regression_vec.m as objective.
 %
 % TODO:  Implement batch logistic regression in logistic_regression_vec.m using
@@ -44,6 +47,9 @@ theta = rand(n,1)*0.001;
 tic;
 theta=minFunc(@logistic_regression_vec, theta, options, train.X, train.y);
 fprintf('Optimization took %f seconds.\n', toc);
+
+% error = grad_check(@logistic_regression_vec, theta, 100, train.X, train.y);
+% fprintf('Average gradient error is %10f\n', error);
 
 % Print out training accuracy.
 tic;

@@ -47,6 +47,9 @@ options = struct('MaxIter', 200);
 theta = minFunc(@linear_regression, theta, options, train.X, train.y);
 fprintf('Optimization took %f seconds.\n', toc);
 
+error = grad_check(@linear_regression, theta, 100, train.X, train.y);
+fprintf('Average gradient error is %10f\n', error);
+
 % Run minFunc with linear_regression_vec.m as the objective.
 %
 % TODO:  Implement linear regression in linear_regression_vec.m
@@ -60,6 +63,9 @@ theta = rand(n,1);
 tic;
 theta = minFunc(@linear_regression_vec, theta, options, train.X, train.y);
 fprintf('Optimization took %f seconds.\n', toc);
+
+error = grad_check(@linear_regression_vec, theta, 100, train.X, train.y);
+fprintf('Average gradient error is %10f\n', error);
 
 % Plot predicted prices and actual prices from training set.
 actual_prices = train.y;
