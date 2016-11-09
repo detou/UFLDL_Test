@@ -34,11 +34,14 @@ function [f,g] = softmax_regression_vec(theta, X,y)
   % Get theta sums
   T = exp(theta' * X);
   
-  % Get P matrix
+  % Get P matrix, giving probability for each k for each X sample
   P = bsxfun(@rdivide, T, sum(T, 1));
   
-  % Get P2 matrix
-  %P2 = bsxfun(@rdivide, ones(1, m), sum(T, 1));
+  % Now T should be useless
+  % We create a matrix telling for each couple i / k if y(i) == k
+  
+  
+  
   
   % Sum on m
   for i = 1 : m
