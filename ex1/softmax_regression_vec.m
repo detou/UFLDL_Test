@@ -37,11 +37,17 @@ function [f,g] = softmax_regression_vec(theta, X,y)
   % Get P matrix, giving probability for each k for each X sample
   P = bsxfun(@rdivide, T, sum(T, 1));
   
-  % Now T should be useless
-  % We create a matrix telling for each couple i / k if y(i) == k
+  % Now T should be useless  
+  % We get a matrix containing only the value of P where y(i) == k
+  I = sub2ind(size(P), y, 1:size(P,2));
+  M = P(I);
   
+  f = -sum(log(M));
   
-  
+  % Prob matrix for g
+  R = spones(M) - M;
+  % => Not working
+  %g = X * R;
   
   % Sum on m
   for i = 1 : m
@@ -51,7 +57,7 @@ function [f,g] = softmax_regression_vec(theta, X,y)
               p =  P(k, i);
               
               if y(i) == k
-                  f = f - log(p);
+                  %f = f - log(p);
                   g(:, k) = g(:, k) - X(:, i) * (1 - p);
               else
                   g(:, k) = g(:, k) + X(:, i) * p;
