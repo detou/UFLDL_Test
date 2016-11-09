@@ -37,7 +37,7 @@ theta = rand(n,num_classes-1)*0.001;
 % file using a vectorized implementation.
 %
 tic;
-theta(:)=minFunc(@softmax_regression_vec, theta(:), options, train.X, train.y);
+theta(:)=minFunc(@softmax_regression, theta(:), options, train.X, train.y);
 fprintf('Optimization took %f seconds.\n', toc);
 theta=[theta, zeros(n,1)]; % expand theta to include the last class.
 
@@ -49,6 +49,9 @@ fprintf('Training accuracy: %2.1f%%\n', 100*accuracy);
 % Print out test accuracy.
 accuracy = multi_classifier_accuracy(theta,test.X,test.y);
 fprintf('Test accuracy: %2.1f%%\n', 100*accuracy);
+
+% error = grad_check(@softmax_regression, theta(:), 100, train.X, train.y);
+% fprintf('Average gradient error is %10f\n', error);
 
 
 % % for learning curves

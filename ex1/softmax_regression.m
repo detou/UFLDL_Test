@@ -1,4 +1,4 @@
-function [f,g] = softmax_regression_vec(theta, X,y)
+function [f,g] = softmax_regression(theta, X,y)
   %
   % Arguments:
   %   theta - A vector containing the parameter values to optimize.
@@ -16,36 +16,31 @@ function [f,g] = softmax_regression_vec(theta, X,y)
   % theta is a vector;  need to reshape to n x num_classes.
   theta=reshape(theta, n, []);
   num_classes=size(theta,2)+1;
-  
-  % initialize objective value and gradient.
-  f = 0;
-  g = zeros(size(theta));
   theta=[theta,zeros(size(theta,1),1)];
   
   % initialize objective value and gradient.
   f = 0;
   g = zeros(size(theta));
-
+  
   %
   % TODO:  Compute the softmax objective function and gradient using vectorized code.
   %        Store the objective function value in 'f', and the gradient in 'g'.
   %        Before returning g, make sure you form it back into a vector with g=g(:);
   %
-% Get theta sums
-  T = exp(theta' * X);
   
-  % Get P matrix
-  P = bsxfun(@rdivide, T, sum(T, 1));
   
-  % Get P2 matrix
-  %P2 = bsxfun(@rdivide, ones(1, m), sum(T, 1));
+  % Get theta sums
+  a = exp(theta' * X);
   
   % Sum on m
   for i = 1 : m
       
       % Sum on classes
       for k = 1 : num_classes
-              p =  P(k, i);
+          
+          % Last class, we ignore theta values
+%           if k < num_classes
+              p = a(k, i) / sum(a(:, i), 1);
               
               if y(i) == k
                   f = f - log(p);
@@ -53,7 +48,11 @@ function [f,g] = softmax_regression_vec(theta, X,y)
               else
                   g(:, k) = g(:, k) + X(:, i) * p;
               end
-
+              
+%           elseif k == num_classes && y(i) == k
+%               p = 1 / sum(a(:, i), 1);
+%               f = f - log(p);
+%           end
       end
   end
   g(:,end)=[];
