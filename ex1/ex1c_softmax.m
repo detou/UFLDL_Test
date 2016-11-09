@@ -50,8 +50,8 @@ fprintf('Training accuracy: %2.1f%%\n', 100*accuracy);
 accuracy = multi_classifier_accuracy(theta,test.X,test.y);
 fprintf('Test accuracy: %2.1f%%\n', 100*accuracy);
 
-% error = grad_check(@softmax_regression, theta(:), 100, train.X, train.y);
-% fprintf('Average gradient error is %10f\n', error);
+error = grad_check(@softmax_regression, theta(:), 100, train.X, train.y);
+fprintf('Average gradient error is %10f\n', error);
 
 
 % % for learning curves

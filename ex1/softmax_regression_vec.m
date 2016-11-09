@@ -37,34 +37,21 @@ function [f,g] = softmax_regression_vec(theta, X,y)
   % Get P matrix, giving probability for each k for each X sample
   P = bsxfun(@rdivide, T, sum(T, 1));
   
-  % Now T should be useless  
-  % We get a matrix containing only the value of P where y(i) == k
+  % Get a matrix giving the indexes of the elements where y(i) == k in P
   I = sub2ind(size(P), y, 1:size(P,2));
+  
+  % We get a matrix containing only the value of P where y(i) == k
   M = P(I);
   
+  % Get a matrix with ones at i, k where y(i) == k
+  O = zeros(size(P));
+  O(I) = 1;
+  
+  % Calculate cost
   f = -sum(log(M));
   
-  % Prob matrix for g
-  R = spones(M) - M;
-  % => Not working
-  %g = X * R;
-  
-  % Sum on m
-  for i = 1 : m
-      
-      % Sum on classes
-      for k = 1 : num_classes
-              p =  P(k, i);
-              
-              if y(i) == k
-                  %f = f - log(p);
-                  g(:, k) = g(:, k) - X(:, i) * (1 - p);
-              else
-                  g(:, k) = g(:, k) + X(:, i) * p;
-              end
-
-      end
-  end
+  % Calculate gradient
+  g = X * P' - X * O';
   
   g(:,end)=[];
   g=g(:); % make gradient a vector for minFunc
