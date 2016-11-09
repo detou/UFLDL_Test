@@ -51,13 +51,21 @@ I = sub2ind(size(pred_prob), labels', 1:size(pred_prob,2));
 O = zeros(size(pred_prob));
 O(I) = 1;
 
-% Calculate cost
+% Calculate cost (WARNING: not sure about it but seems to look good...)
 ceCost = 1 / (2 * size(data, 2)) * sum(sqrt(sum((O - pred_prob) .^ 2)));
 
 %% compute gradients using backpropagation
 %%% YOUR CODE HERE %%%
 
+delta = cell(numHidden + 1, 1);
 
+for i = numHidden + 1 : -1 : 1
+   if i == numHidden + 1
+      delta{i} = stack{i}.W' * pred_prob; 
+   else
+      delta{i} = stack{i}.W' * delta{i + 1} * hAct{i} * (1 - hAct{i});
+   end
+end
 
 %% compute weight penalty cost and gradient for non-bias terms
 %%% YOUR CODE HERE %%%
