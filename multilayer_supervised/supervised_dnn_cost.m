@@ -27,9 +27,11 @@ for i = 1 : numHidden + 1
     end
     
     % Apply activation function to hAct
-    switch ei.activation_fun
-        case 'logistic'
-            hAct{i} = sigmoid(hAct{i}); 
+    if i < numHidden + 1 % => Do not apply to the last layer
+        switch ei.activation_fun
+            case 'logistic'
+                hAct{i} = sigmoid(hAct{i}); 
+        end
     end
 end
 
@@ -62,7 +64,7 @@ O(I) = 1;
 for i = numHidden + 1 : -1 : 1
    fd = hAct{i} .* (1 - hAct{i});
    if i == numHidden + 1
-      delta{i} = - (O - pred_prob) .* fd;
+      delta{i} = - (O - pred_prob); %.* fd; => Does not work with this term... Error in tutorial ?
    else
       delta{i} = stack{i + 1}.W' * delta{i + 1} .* fd;
    end
