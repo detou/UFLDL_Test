@@ -48,27 +48,50 @@ end;
 
 % Get a matrix with ones at i, k where y(i) == k
 I = sub2ind(size(pred_prob), labels', 1:size(pred_prob,2));
-O = zeros(size(pred_prob));
-O(I) = 1;
-
-% Calculate cost (WARNING: not sure about it but seems to look good...)
-ceCost = 1 / (2 * size(data, 2)) * sum(sqrt(sum((O - pred_prob) .^ 2)));
+ceCost=-sum(log(pred_prob(I)));
 
 %% compute gradients using backpropagation
 %%% YOUR CODE HERE %%%
 
+% Compute delta
 delta = cell(numHidden + 1, 1);
 
+O = zeros(size(pred_prob));
+O(I) = 1;
+
 for i = numHidden + 1 : -1 : 1
+   fd = hAct{i} .* (1 - hAct{i});
    if i == numHidden + 1
-      delta{i} = stack{i}.W' * pred_prob; 
+      delta{i} = - (O - pred_prob) .* fd;
    else
-      delta{i} = stack{i}.W' * delta{i + 1} * hAct{i} * (1 - hAct{i});
+      delta{i} = stack{i + 1}.W' * delta{i + 1} .* fd;
    end
+end
+
+% Compute gradient
+for i = 1 : numHidden + 1
+    if(i == 1)
+        gradStack{i}.W = delta{i} * data';
+    else
+        gradStack{i}.W = delta{i} * hAct{i - 1}';
+    end
+    gradStack{i}.b = sum(delta{i}, 2);
 end
 
 %% compute weight penalty cost and gradient for non-bias terms
 %%% YOUR CODE HERE %%%
+wCost = 0;
+for i = 1: numHidden + 1
+    wCost = wCost + 0.5 * ei.lambda * sum (stack{i}.W(:) .^ 2);% The sum of squares of the weights
+end
+
+cost = ceCost + wCost;
+
+% Computing the gradient of the weight decay.
+for i = numHidden: -1: 1
+    gradStack{i}.W = gradStack{i}.W + ei.lambda * stack{i}.W;% softmax Weak weight attenuation
+end
+
 
 %% reshape gradients into vector
 [grad] = stack2params(gradStack);
